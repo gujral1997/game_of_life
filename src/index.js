@@ -20,18 +20,18 @@ class Box extends React.Component{
 
         }
 
-        class Grid extends React.Component {
-          render()
-          {
-            const width=(this.props.cols * 16)+1;
+class Grid extends React.Component {
+  render()
+    {
+      const width=(this.props.cols * 16)+1;
             var rowsArr= [];
             var boxClass="";
-            for(var i=0;i<this.props.rows;++i)
+            for(var i=0;i<this.props.rows;i++)
             {
-              for(var j=0;j<this.props.cols;++j)
+              for(var j=0;j<this.props.cols;j++)
               {
                 let boxId=i+"_"+j;
-                boxClass=this.props.gridFull[i][j]?"box_on":"box_off";
+                boxClass=this.props.gridFull[i][j]?"box on":"box off";
                 rowsArr.push(
                   <Box
                     boxClass={boxClass}
@@ -49,8 +49,8 @@ class Box extends React.Component{
                 {rowsArr}
               </div>
             );
-          }
-        }
+    }
+  }
 
         class Main extends React.Component
         {
@@ -65,6 +65,33 @@ class Box extends React.Component{
               generation:0,
               gridFull:Array(this.rows).fill().map(()=>Array(this.cols).fill(false))
             }
+          }
+          selectBox=(row,col)=>
+          {
+            let gridCopy=arrayClone(this.state.gridFull);
+            gridCopy[row][col]=!gridCopy[row][col];
+            this.setState({
+              gridFull:gridCopy
+            })
+          }
+
+          seed=()=>{
+            let gridCopy=arrayClone(this.state.gridFull);
+            for(let i=0;i<this.rows;i++)
+            {
+              for(let j=0;j<this.cols;j++)
+              {
+                if(Math.floor(Math.random()*4)===1){
+                  gridCopy[i][j]=true;
+                }
+              }
+            }
+            this.setState({
+              gridFull:gridCopy
+            });
+          }
+          componentDidMount(){
+            this.seed();
           }
           render()
           {
@@ -81,5 +108,9 @@ class Box extends React.Component{
               </div>
             );
           }
+        }
+        function arrayClone(arr)
+        {
+          return JSON.parse(JSON.stringify(arr));
         }
         ReactDOM.render(<Main />, document.getElementById('root'));
